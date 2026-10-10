@@ -1,0 +1,13 @@
+flowchart TD
+    I["IDLE: outputs off"] -->|"Fresh Start; clear cell; cylinder home"| R["RUN: conveyor on"]
+    R -->|"Station detects part"| S["SETTLE: conveyor off, 0.20 s"]
+    S --> X["EXTEND: diverter on"]
+    X -->|"Extended feedback"| T["RETRACT: diverter off"]
+    T -->|"Retracted feedback"| V["VERIFY: await fresh exit edge"]
+    V -->|"Exit edge and station clear; count +1"| R
+    X -->|"1 s timeout"| F["FAULT: outputs off; alarm"]
+    T -->|"1 s timeout"| F
+    V -->|"2 s timeout"| F
+    F -->|"Fresh Reset; healthy chain; clear cell; home"| I
+    R -->|"Stop; cell clear"| I
+    G["Global: safety loss, overload, contradictory feedback"] --> F
